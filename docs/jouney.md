@@ -8,4 +8,6 @@ To be able to build things without relying on AI for the actual coding. I will s
 Today's deliverable were
 - Initialize the project with github repo
 - Create a firebase project with authentication set up
+- Created Firestore collection to verify the credentials
+  
   
