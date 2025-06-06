@@ -1,4 +1,4 @@
-Dependencies
+
 node_modules/
 __pycache__/
 *.pyc
@@ -30,3 +30,6 @@ logs/
 
 # Extension builds
 extension.zip
+
+#config folder
+config/

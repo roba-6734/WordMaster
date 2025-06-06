@@ -1,5 +1,5 @@
 # WordMaster Web-App Journey
-## Day 1
+## Day 1 (06/06/2025)
 Today marks the first day of building a vocabulary learning app that allows users to add new words they encounter while surfing on browser and learn it effectively using spaced repetition algorithm.
 I will document my three weeks journey of building the app all by myself without relying on copy pasting a code or just vibecoding it without understanding what it is doing. It might not be the most efficient way to build in now a days but I am challenging myself to learn building without relying on AI and not understanding it. Once I understand the process, I can accelerate my progress for other projects by vibecoding the boilerplate. 
 ## MY WHY 
