@@ -1,8 +1,8 @@
-Detailed API Planning
+# Detailed API Planning
 
 Now let's plan each API group in detail, considering what data each endpoint needs to handle and how they'll work together.
 
-Authentication API Group
+## Authentication API Group
 
 The authentication system forms the foundation of your app's security. Users need to register, log in, and maintain secure sessions across both the web app and Chrome extension.
 
@@ -14,7 +14,7 @@ Token Management: The system needs to generate secure tokens, validate tokens on
 
 Google OAuth Integration: Since you want to support Google login, the system needs to handle OAuth flows and integrate with Google's authentication services.
 
-Word Management API Group
+## Word Management API Group
 
 This group handles all operations related to a user's vocabulary collection. These APIs are among the most frequently used in your application.
 
@@ -26,7 +26,7 @@ Updating Words: Users might want to add personal notes to words, mark words as f
 
 Deleting Words: Users should be able to remove words from their collection, which also requires cleaning up associated learning progress data.
 
-Dictionary Integration API Group
+## Dictionary Integration API Group
 
 These APIs handle communication with external dictionary services to fetch word definitions, examples, pronunciations, and related information.
 
@@ -36,7 +36,7 @@ Caching Strategy: To improve performance and reduce external API calls, the syst
 
 Fallback Handling: If the primary dictionary service is unavailable or doesn't have information for a specific word, the system should have fallback strategies.
 
-Learning System API Group
+## Learning System API Group
 
 This group implements the core learning functionality that makes your app effective for vocabulary acquisition.
 
@@ -48,7 +48,7 @@ Due Words Calculation: The system determines which words are due for review base
 
 Performance Analytics: The system tracks overall learning statistics to show users their progress over time.
 
-Quiz Generation API Group
+## Quiz Generation API Group
 
 These APIs create engaging quiz experiences to help users practice their vocabulary.
 
@@ -60,7 +60,7 @@ Answer Validation: The system checks user responses and provides immediate feedb
 
 Results Processing: After quiz completion, the system updates learning progress for each word based on the user's performance.
 
-Chrome Extension API Group
+## Chrome Extension API Group
 
 These APIs provide specific functionality needed by the Chrome extension to integrate seamlessly with the main application.
 
@@ -70,7 +70,7 @@ Authentication Sync: The extension needs to authenticate users and maintain sess
 
 Data Synchronization: The extension should sync with the main application to ensure users see consistent data across platforms.
 
-Data Models and Relationships
+## Data Models and Relationships
 
 Understanding the data structure is crucial for designing effective APIs. Let's examine the key data models and how they relate to each other.
 
@@ -98,11 +98,11 @@ This model stores information about completed quizzes, enabling progress trackin
 
 Important attributes include the user who took the quiz, when the quiz was completed, the quiz type and configuration, overall score and performance metrics, and detailed results for each word included in the quiz.
 
-API Endpoint Specifications
+# API Endpoint Specifications
 
 Now let's define the specific endpoints for each API group, including their URLs, HTTP methods, required parameters, and expected responses.
 
-Authentication Endpoints
+## Authentication Endpoints
 
 User Registration
 
@@ -189,7 +189,7 @@ Response: success confirmation
 •
 Error Cases: invalid token
 
-User Management Endpoints
+## User Management Endpoints
 
 Get User Profile
 
@@ -259,7 +259,7 @@ Response: updated settings
 •
 Error Cases: unauthorized access, invalid settings
 
-Word Management Endpoints
+## Word Management Endpoints
 
 Get User's Words
 
@@ -352,7 +352,7 @@ Response: deletion confirmation
 •
 Error Cases: unauthorized access, word not found
 
-Dictionary Integration Endpoints
+## Dictionary Integration Endpoints
 
 Lookup Word Definition
 
@@ -464,7 +464,7 @@ Response: updated learning settings
 •
 Error Cases: unauthorized access, invalid settings
 
-Quiz Generation Endpoints
+## Quiz Generation Endpoints
 
 Generate Quiz
 
@@ -523,7 +523,7 @@ Response: array of past quiz results
 •
 Error Cases: unauthorized access
 
-Chrome Extension Endpoints
+## Chrome Extension Endpoints
 
 Add Word from Extension
 
