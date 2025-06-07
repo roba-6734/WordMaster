@@ -10,4 +10,9 @@ Today's deliverable were
 - Create a firebase project with authentication set up
 - Created Firestore collection to verify the credentials
   
+## Day 2(07/06/2025)
+Today is my second day 21 day web app building challenge. Today I have accomplished the following tasks
+- Created a comprehensive API documentation with appropriate endpoints
+- Initialized firebase collections 
+- 
   
