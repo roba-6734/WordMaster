@@ -10,5 +10,3 @@ app = firebase_admin.initialize_app(credential=credential)
 db = firestore.client()
 
 
-doc_ref = db.collection("Users").document("rabera")
-doc_ref.set({"first": "RObera", "last": "Abera"})
