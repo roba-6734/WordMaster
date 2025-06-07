@@ -14,5 +14,7 @@ Today's deliverable were
 Today is my second day 21 day web app building challenge. Today I have accomplished the following tasks
 - Created a comprehensive API documentation with appropriate endpoints
 - Initialized firebase collections 
-- 
+  
+Tomorrow I will start implementing the api endpoints starting with user authentication
+
   
