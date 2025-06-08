@@ -2,3 +2,5 @@ firebase-admin
 python-dotenv
 fastapi
 uvicorn
+passlib[bcrypt]
+pydantic[email]
