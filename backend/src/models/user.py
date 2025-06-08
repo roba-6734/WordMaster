@@ -5,7 +5,7 @@ from typing import Optional
 
 class UserCreate(BaseModel):
     email:EmailStr
-    displayName:str
+    display_name:str
     password:str
 
 
@@ -17,5 +17,5 @@ class UserLogin(BaseModel):
 class UserResponse(BaseModel):
     id:str
     email:EmailStr
-    displayName:str
+    display_name:str
     createdAt: Optional[str] = None

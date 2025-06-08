@@ -23,14 +23,13 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/api/user/login')
 
 async def get_current_user(token:str = Depends(oauth2_scheme)):
     try:
-        payload = verify_firebase_token(token)
-        user_id = payload.get('uid')
+        user_id = token
         if user_id is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid authentication credentials",
             )
-        pass
+        
     except ValueError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -38,10 +37,12 @@ async def get_current_user(token:str = Depends(oauth2_scheme)):
         )
     
     user_doc = db.collection('users').document(user_id).get()
+    
     if not user_doc:
         raise HTTPException(status_code=404, detail='User not found')
-    
-    return user_doc.to_dict
+    user_data = user_doc.to_dict()
+    user_data['id']=user_id
+    return user_data
 
 
 
@@ -55,7 +56,7 @@ async def register_user(user:UserCreate):
     try:
         firebase_user = create_firebase_user(
             email = user.email,
-            display_name=user.displayName,
+            display_name=user.display_name,
             password=user.password
         )
 
@@ -90,11 +91,16 @@ async def login(form_data:OAuth2PasswordRequestForm=Depends()):
     try:
         user = auth.get_user_by_email(form_data.username)
 
-        custom_token = auth.create_custom_token(user.uid)
+        
+
+        db.collection('users').document(user.uid).update({
+            'lastLoginAt':firestore.SERVER_TIMESTAMP
+        })
 
         return {
-            'access token': custom_token.decode('utf-8'),
-            'token type': 'bearer'
+            'access token': user.uid,
+            'token type': 'bearer',
+            'user_id':user.uid
         }
     
        
