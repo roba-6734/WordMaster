@@ -8,9 +8,18 @@ from src.utils import create_firebase_user, verify_firebase_token
 from src.utils import CustomException
 from src.models import UserCreate,UserLogin,UserResponse
 from src.firebase import db
+from src.config import settings
 
 
-app = FastAPI()
+app = FastAPI(
+    title=settings.PROJECT_NAME,
+    description= settings.DESCRIPTION,
+    version= settings.VERSION,
+    docs_url=settings.DOCS_URL,
+    redoc_url=settings.REDOCS_URL,
+    debug=settings.DEBUG
+   
+)
 app.add_middleware(
     CORSMiddleware,
     allow_origins =['*'],
@@ -57,7 +66,10 @@ def index():
     return {"HomePage":"Welcome to my webapp"}
 
 
-@app.post('/api/auth/register')
+@app.post('/api/auth/register',
+          response_model=UserResponse,
+          summary="Register a new user",
+          description="Create a new user account with email and password")
 async def register_user(user:UserCreate):
     try:
         firebase_user = create_firebase_user(
@@ -92,7 +104,9 @@ async def register_user(user:UserCreate):
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@app.post('/api/auth/login')
+@app.post('/api/auth/login',
+          summary="User login",
+          description="Authenticate user and return access token")
 async def login(userLogin:UserLogin):
     try:
         user = auth.get_user_by_email(userLogin.email)

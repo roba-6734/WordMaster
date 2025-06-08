@@ -21,4 +21,4 @@ Tomorrow I will start implementing the api endpoints starting with user authenti
 Today I have started the implementation of the endpoints
 Deliverables
 - Auth endpoints(register,login, logout, user info) implementation
-- 
+- Refactored main.py to increase the robustness
