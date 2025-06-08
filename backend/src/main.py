@@ -1,5 +1,5 @@
 from firebase_admin import firestore,auth
-from fastapi import FastAPI,Depends, HTTPException, status
+from fastapi import FastAPI,Depends, HTTPException, status, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer,OAuth2PasswordRequestForm
 from datetime import datetime
@@ -19,31 +19,37 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+@app.middleware("http" )
+async def auth_middleware(request: Request, call_next):
+    
+    response = await call_next(request)
+    return response
+
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/api/user/login')
 
-async def get_current_user(token:str = Depends(oauth2_scheme)):
+async def get_current_user(token: str = Depends(oauth2_scheme)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"Authorization": "Bearer"},  # Tells client how to authenticate
+    )
+    
     try:
         user_id = token
-        if user_id is None:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid authentication credentials",
-            )
+        if not user_id:  # Check for empty token
+            raise credentials_exception
+            
+        user_doc = db.collection("users").document(user_id).get()
+        if not user_doc.exists:  # User doesn't exist
+            raise credentials_exception  # Same error for security
         
-    except ValueError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid authentication credentials",
-        )
-    
-    user_doc = db.collection('users').document(user_id).get()
-    
-    if not user_doc:
-        raise HTTPException(status_code=404, detail='User not found')
-    user_data = user_doc.to_dict()
-    user_data['id']=user_id
-    return user_data
-
+        user_data = user_doc.to_dict()
+        user_data["id"] = user_id
+        return user_data
+        
+    except Exception:  # Any other error
+        raise credentials_exception  # Always same error
 
 
 @app.get('/')

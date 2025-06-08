@@ -17,4 +17,8 @@ Today is my second day 21 day web app building challenge. Today I have accomplis
   
 Tomorrow I will start implementing the api endpoints starting with user authentication
 
-  
+## Day 3 (08/06/2025)
+Today I have started the implementation of the endpoints
+Deliverables
+- Auth endpoints(register,login, logout, user info) implementation
+- 
