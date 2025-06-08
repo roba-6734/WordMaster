@@ -1,4 +1,4 @@
-from firebase_admin import firestore
+from firebase_admin import firestore,auth
 from fastapi import FastAPI,Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer,OAuth2PasswordRequestForm
@@ -86,13 +86,37 @@ async def register_user(user:UserCreate):
 
 
 @app.post('/api/auth/login')
-def login():
-    pass
+async def login(form_data:OAuth2PasswordRequestForm=Depends()):
+    try:
+        user = auth.get_user_by_email(form_data.username)
+
+        custom_token = auth.create_custom_token(user.uid)
+
+        return {
+            'access token': custom_token.decode('utf-8'),
+            'token type': 'bearer'
+        }
+    
+       
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+
+  
 
 @app.get('/api/auth/user')
-def get_user_info():
-    pass
+async def get_user_info(current_user=Depends(get_current_user)):
+    return {
+        "id": current_user.get("id"),
+        "email": current_user.get("email"),
+        "display_name": current_user.get("display_name"),
+        "created_at": current_user.get("created_at")
+    }
 
 @app.post('/api/auth/logout')
 def logout():
-    pass
+    return {'message':"You have successfully logged out"}
