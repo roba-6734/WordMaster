@@ -87,9 +87,9 @@ async def register_user(user:UserCreate):
 
 
 @app.post('/api/auth/login')
-async def login(form_data:OAuth2PasswordRequestForm=Depends()):
+async def login(userLogin:UserLogin):
     try:
-        user = auth.get_user_by_email(form_data.username)
+        user = auth.get_user_by_email(userLogin.email)
 
         
 
