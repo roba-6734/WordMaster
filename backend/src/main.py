@@ -4,10 +4,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer,OAuth2PasswordRequestForm
 from datetime import datetime
 
-from src.utils.auth_utils import create_firebase_user, verify_firebase_token
-from src.utils.exception import CustomException
-from src.models.user import UserCreate,UserLogin,UserResponse
-from src.firebase.firebase_setup import db
+from src.utils import create_firebase_user, verify_firebase_token
+from src.utils import CustomException
+from src.models import UserCreate,UserLogin,UserResponse
+from src.firebase import db
 
 
 app = FastAPI()

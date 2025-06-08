@@ -1,1 +1,1 @@
-from firebase_setup import db
+from src.firebase.firebase_setup import db
