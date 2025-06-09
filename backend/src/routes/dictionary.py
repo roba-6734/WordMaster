@@ -29,38 +29,3 @@ async def lookup_word(word: str, current_user = Depends(get_current_user)):
             message=f"The word: {word} is not found in the dictionary"
         )
     
-
-
-@router.get("/test/{word}")
-async def test_lookup(word: str):
-    """
-    Test endpoint (no authentication required) for testing dictionary API
-    """
-    word_data = await dictionary_service.lookup_word(word)
-    return {"word": word, "found": word_data is not None, "data": word_data}
-
-@router.get("/debug/{word}")
-async def debug_lookup(word: str):
-    """
-    Debug endpoint to see what's happening with the API call
-    """
-    import httpx
-    
-    try:
-        async with httpx.AsyncClient(timeout=10.0 ) as client:
-            url = f"https://api.dictionaryapi.dev/api/v2/entries/en/{word.lower( )}"
-            print(f"Making request to: {url}")
-            
-            response = await client.get(url)
-            
-            print(f"Status code: {response.status_code}")
-            print(f"Response text: {response.text}")
-            
-            return {
-                "url": url,
-                "status_code": response.status_code,
-                "response_text": response.text,
-                "response_json": response.json() if response.status_code == 200 else None
-            }
-    except Exception as e:
-        return {"error": str(e)}
