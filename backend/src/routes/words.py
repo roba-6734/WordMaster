@@ -109,70 +109,34 @@ async def get_words(
 
     try:
         user_id = current_user["id"]
-        print(f"🔍 Getting words for user: {user_id}")
-        print(f"📄 Page: {page}, Per page: {per_page}, Search: {search}")
-        
-        # Start with basic query
         query = db.collection("words").where("userId", "==", user_id)
-        print(f"✅ Basic query created")
-        
-        # Add search filter if provided
         if search:
             search_term = search.strip().lower()
-            print(f"🔎 Adding search filter for: {search_term}")
             query = query.where("word", ">=", search_term).where("word", "<=", search_term + "\uf8ff")
-        
-        # Try to get documents WITHOUT ordering first
-        print(f"📊 Getting documents without ordering...")
         try:
             docs_without_order = list(query.stream())
-            print(f"✅ Found {len(docs_without_order)} documents without ordering")
         except Exception as e:
-            print(f"❌ Error getting docs without order: {str(e)}")
             raise e
-        
-        # Now try adding the order
-        print(f"📈 Adding order by addedAt...")
         try:
             query = query.order_by("addedAt", direction=firestore.Query.DESCENDING)
             total_docs = list(query.stream())
             total = len(total_docs)
-            print(f"✅ Found {total} documents with ordering")
         except Exception as e:
-            print(f"❌ Error with ordering: {str(e)}")
-            # Fallback: use docs without ordering
-            print(f"🔄 Using fallback without ordering")
             total_docs = docs_without_order
             total = len(total_docs)
-        
-        # Calculate pagination
         offset = (page - 1) * per_page
         has_next = offset + per_page < total
         has_prev = page > 1
-        
-        print(f"📖 Pagination: offset={offset}, has_next={has_next}, has_prev={has_prev}")
-        
-        # Get paginated results
         paginated_docs = total_docs[offset:offset + per_page]
-        print(f"📑 Processing {len(paginated_docs)} documents")
-        
-        # Convert to response format
         words = []
         for i, doc in enumerate(paginated_docs):
             try:
-                print(f"🔄 Processing document {i+1}/{len(paginated_docs)}: {doc.id}")
                 doc_data = doc.to_dict()
-                print(f"📝 Document keys: {list(doc_data.keys())}")
-                
-                # Handle timestamp
                 added_at = doc_data.get("addedAt")
                 if added_at and hasattr(added_at, 'timestamp'):
                     added_at_str = datetime.fromtimestamp(added_at.timestamp()).isoformat()
-                    print(f"⏰ Converted timestamp: {added_at_str}")
                 else:
                     added_at_str = datetime.now().isoformat()
-                    print(f"⏰ Using current time: {added_at_str}")
-                
                 word_response = WordResponse(
                     id=doc.id,
                     user_id=doc_data.get("userId", user_id),
@@ -189,17 +153,10 @@ async def get_words(
                     difficulty_level=doc_data.get("difficultyLevel")
                 )
                 words.append(word_response)
-                print(f"✅ Successfully processed word: {word_response.word}")
-                
             except Exception as e:
-                print(f"❌ Error processing document {doc.id}: {str(e)}")
                 import traceback
                 traceback.print_exc()
-                # Skip this document and continue
                 continue
-        
-        print(f"🎉 Successfully processed {len(words)} words")
-        
         result = WordListResponse(
             words=words,
             total=total,
@@ -208,12 +165,9 @@ async def get_words(
             has_next=has_next,
             has_prev=has_prev
         )
-        
-        print(f"📤 Returning response with {len(result.words)} words")
         return result
         
     except Exception as e:
-        print(f"💥 Error in get_words: {str(e)}")
         import traceback
         traceback.print_exc()
         logging.error(f"Error getting words: {str(e)}")
