@@ -21,4 +21,9 @@ Tomorrow I will start implementing the api endpoints starting with user authenti
 Today I have started the implementation of the endpoints
 Deliverables
 - Auth endpoints(register,login, logout, user info) implementation
+- Tested the routes using postman
+- Created Pydantic user models for robust validation
+- Created a config file for the whole project configurations
 - Refactored main.py to increase the robustness
+  
+That is the end of day 3. Today I have accomplished a great thing and Tomorrow will be even greater.

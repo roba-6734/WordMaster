@@ -1,8 +1,9 @@
+from datetime import datetime
+
 from firebase_admin import firestore,auth
 from fastapi import FastAPI,Depends, HTTPException, status, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer,OAuth2PasswordRequestForm
-from datetime import datetime
 
 from src.utils import create_firebase_user, verify_firebase_token
 from src.utils import CustomException
@@ -146,3 +147,10 @@ async def get_user_info(current_user=Depends(get_current_user)):
 @app.post('/api/auth/logout')
 def logout():
     return {'message':"You have successfully logged out"}
+
+
+
+@app.get('/api/dictionary/lookup/{word}')
+async def lookup_word(word : str):
+    return {"hello":word}
+
