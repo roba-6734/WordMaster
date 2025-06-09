@@ -10,6 +10,7 @@ from src.utils import CustomException
 from src.models import UserCreate,UserLogin,UserResponse
 from src.firebase import db
 from src.config import settings
+from src.routes import dictionary
 
 
 app = FastAPI(
@@ -153,4 +154,6 @@ def logout():
 @app.get('/api/dictionary/lookup/{word}')
 async def lookup_word(word : str):
     return {"hello":word}
+
+app.include_router(router=dictionary.router)
 
