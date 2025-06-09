@@ -1,3 +1,4 @@
+from curses.ascii import HT
 from datetime import datetime
 from typing import Optional, List
 
@@ -172,11 +173,43 @@ async def get_word(
         )
 
 
-@router.get("/{word_id}")
+@router.get("/{word_id}", response_model=WordResponse)
 async def get_word(word_id: str, current_user = Depends(get_current_user)):
     try:
         user_id = current_user['id']
+
+        doc = db.collection('words').document(word_id).get()
+        if not doc.exists:
+            raise HTTPException(
+                status_code=404, detail="Word not found"
+            )
+        doc_data = doc.to_dict()
+
+        if doc_data['user_id'] == user_id:
+            raise HTTPException(status_code=403, detail="Access Denied")
+        word_response = WordResponse(
+            id=doc.id,
+            user_id=doc_data["userId"],
+            word=doc_data["word"],
+            added_at=doc_data["addedAt"].isoformat() if doc_data.get("addedAt") else datetime.now().isoformat(),
+            source=doc_data.get("source", "manual"),
+            source_url=doc_data.get("sourceUrl"),
+            definitions=doc_data.get("definitions", []),
+            phonetics=doc_data.get("phonetics", []),
+            synonyms=doc_data.get("synonyms", []),
+            antonyms=doc_data.get("antonyms", []),
+            user_notes=doc_data.get("userNotes"),
+            is_favorite=doc_data.get("isFavorite", False),
+            difficulty_level=doc_data.get("difficultyLevel")
+        )
         
-        pass
-    except:
-        pass
+        return word_response
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"💥 Error getting word: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to retrieve word. Please try again."
+        )

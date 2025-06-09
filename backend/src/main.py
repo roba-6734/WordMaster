@@ -11,6 +11,7 @@ from src.models import UserCreate,UserLogin,UserResponse
 from src.firebase import db
 from src.config import settings
 from src.routes import dictionary
+from src.routes import words
 
 
 app = FastAPI(
@@ -129,4 +130,5 @@ def logout():
 
 
 app.include_router(router=dictionary.router)
+app.include_router(router=words.router)
 
