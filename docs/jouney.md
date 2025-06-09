@@ -27,3 +27,12 @@ Deliverables
 - Refactored main.py to increase the robustness
   
 That is the end of day 3. Today I have accomplished a great thing and Tomorrow will be even greater.
+
+## Day 4 (09/06/2025)
+Today I started working a bit late and made some other compromises but it will not be repeated
+Deliverables
+- Implemented Dictionary lookup functionality
+- Implemented word management api endpoints
+- Refactored some modules
+  
+It was a success but I will try to finish my work before evening for later time and stop sleeping during day time.
