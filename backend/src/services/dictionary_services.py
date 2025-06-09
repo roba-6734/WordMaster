@@ -73,8 +73,8 @@ class DictionaryService:
                     "phonetic": phonetic,
                     "phonetics": phonetics,
                     "definitions": definitions,
-                    "synonyms": list(synonyms)[:5],  # Limit to 10
-                    "antonyms": list(antonyms)[:5],   # Limit to 10
+                    "synonyms": list(synonyms)[:5],  
+                    "antonyms": list(antonyms)[:5],   
                     "source": "dictionaryapi.dev"
                 }
                 
@@ -88,5 +88,6 @@ class DictionaryService:
                 "antonyms": [],
                 "source": "dictionaryapi.dev"
             }
-            
-           
+
+
+dictionary_service = DictionaryService()

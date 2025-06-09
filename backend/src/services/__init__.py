@@ -1,0 +1,1 @@
+from src.services.dictionary_services import dictionary_service
