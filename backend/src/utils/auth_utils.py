@@ -1,7 +1,6 @@
 from typing import Optional
 from datetime import datetime, timedelta
 
-import firebase_admin
 from firebase_admin import auth
 from firebase_admin.exceptions import FirebaseError
 from passlib.context import CryptContext
@@ -72,5 +71,3 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         
     except Exception:  # Any other error
         raise credentials_exception  # Always same error
-
-
