@@ -100,51 +100,48 @@ async def add_word(word_data: WordCreate, current_user = Depends(get_current_use
             detail="Failed to add word. Please try again."
         )
        
-
 @router.get("/", response_model=WordListResponse)
-async def get_word(
+async def get_words(  # ← Changed function name (was conflicting with get_word below)
     page: int = 1,
     per_page: int = 20,
     search: Optional[str] = None,
     current_user = Depends(get_current_user)):
 
     try:
-        user_id = current_user["id"]
-        
-        
-        
-       
+        user_id = current_user["id"]       
         query = db.collection("words").where("userId", "==", user_id)
-        
         
         if search:
             search_term = search.strip().lower()
             query = query.where("word", ">=", search_term).where("word", "<=", search_term + "\uf8ff")
         
-        
         query = query.order_by("addedAt", direction=firestore.Query.DESCENDING)
-        
         
         total_docs = list(query.stream())
         total = len(total_docs)
-        
         
         offset = (page - 1) * per_page
         has_next = offset + per_page < total
         has_prev = page > 1
         
-       
         paginated_docs = total_docs[offset:offset + per_page]
-        
         
         words = []
         for doc in paginated_docs:
             doc_data = doc.to_dict()
+            
+            # ← FIX: Handle Firestore timestamp properly
+            added_at = doc_data.get("addedAt")
+            if added_at and hasattr(added_at, 'timestamp'):
+                added_at_str = datetime.fromtimestamp(added_at.timestamp()).isoformat()
+            else:
+                added_at_str = datetime.now().isoformat()
+            
             word_response = WordResponse(
                 id=doc.id,
                 user_id=doc_data["userId"],
                 word=doc_data["word"],
-                added_at=doc_data["addedAt"].isoformat() if doc_data.get("addedAt") else datetime.now().isoformat(),
+                added_at=added_at_str,  # ← FIX: Use the properly converted timestamp
                 source=doc_data.get("source", "manual"),
                 source_url=doc_data.get("sourceUrl"),
                 definitions=doc_data.get("definitions", []),
@@ -166,7 +163,7 @@ async def get_word(
             has_prev=has_prev
         )
     except Exception as e:
-        logging.info(f"💥 Error getting words: {str(e)}")
+        logging.error(f"💥 Error getting words: {str(e)}")
         raise HTTPException(
             status_code=500,
             detail="Failed to retrieve words. Please try again."
@@ -174,7 +171,7 @@ async def get_word(
 
 
 @router.get("/{word_id}", response_model=WordResponse)
-async def get_word(word_id: str, current_user = Depends(get_current_user)):
+async def get_specific_word(word_id: str, current_user = Depends(get_current_user)):  # ← Changed function name
     try:
         user_id = current_user['id']
 
@@ -185,13 +182,22 @@ async def get_word(word_id: str, current_user = Depends(get_current_user)):
             )
         doc_data = doc.to_dict()
 
-        if doc_data['user_id'] == user_id:
+        # ← FIX: Correct field name and logic
+        if doc_data.get('userId') != user_id:  # Use 'userId' and != (not ==)
             raise HTTPException(status_code=403, detail="Access Denied")
+        
+        # ← FIX: Handle Firestore timestamp properly
+        added_at = doc_data.get("addedAt")
+        if added_at and hasattr(added_at, 'timestamp'):
+            added_at_str = datetime.fromtimestamp(added_at.timestamp()).isoformat()
+        else:
+            added_at_str = datetime.now().isoformat()
+        
         word_response = WordResponse(
             id=doc.id,
             user_id=doc_data["userId"],
             word=doc_data["word"],
-            added_at=doc_data["addedAt"].isoformat() if doc_data.get("addedAt") else datetime.now().isoformat(),
+            added_at=added_at_str,  # ← FIX: Use the properly converted timestamp
             source=doc_data.get("source", "manual"),
             source_url=doc_data.get("sourceUrl"),
             definitions=doc_data.get("definitions", []),
@@ -208,7 +214,7 @@ async def get_word(word_id: str, current_user = Depends(get_current_user)):
     except HTTPException:
         raise
     except Exception as e:
-        print(f"💥 Error getting word: {str(e)}")
+        logging.error(f"💥 Error getting word: {str(e)}")
         raise HTTPException(
             status_code=500,
             detail="Failed to retrieve word. Please try again."

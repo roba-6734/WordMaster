@@ -43,7 +43,7 @@ class WordUpdate(BaseModel):
     user_notes: Optional[str] = Field(None, max_length=500)
     tags: Optional[List[str]] = Field(None)
     is_favorite: Optional[bool] = Field(None)
-    difficulty_level: Optional[str] = Field(None, regex="^(easy|intermediate|hard)$")
+    difficulty_level: Optional[str] = Field(None, pattern="^(easy|intermediate|hard)$")
 
 
 class WordResponse(BaseModel):
@@ -61,7 +61,7 @@ class WordResponse(BaseModel):
     synonyms: List[str] = []
     antonyms: List[str] = []
     
-    
+
     user_notes: Optional[str] = None
     is_favorite: bool = False
     difficulty_level: Optional[str] = None
