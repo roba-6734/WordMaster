@@ -4,3 +4,4 @@ fastapi
 uvicorn
 passlib[bcrypt]
 pydantic[email]
+httpx
