@@ -5,8 +5,8 @@ from fastapi import FastAPI,Depends, HTTPException, status, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer,OAuth2PasswordRequestForm
 
-from src.utils import create_firebase_user, verify_firebase_token
-from src.utils import CustomException
+from src.utils import create_firebase_user, verify_firebase_token, get_current_user, CustomException
+
 from src.models import UserCreate,UserLogin,UserResponse
 from src.firebase import db
 from src.config import settings
@@ -38,29 +38,6 @@ async def auth_middleware(request: Request, call_next):
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/api/user/login')
-
-async def get_current_user(token: str = Depends(oauth2_scheme)):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"Authorization": "Bearer"},  # Tells client how to authenticate
-    )
-    
-    try:
-        user_id = token
-        if not user_id:  # Check for empty token
-            raise credentials_exception
-            
-        user_doc = db.collection("users").document(user_id).get()
-        if not user_doc.exists:  # User doesn't exist
-            raise credentials_exception  # Same error for security
-        
-        user_data = user_doc.to_dict()
-        user_data["id"] = user_id
-        return user_data
-        
-    except Exception:  # Any other error
-        raise credentials_exception  # Always same error
 
 
 @app.get('/')
@@ -150,10 +127,6 @@ def logout():
     return {'message':"You have successfully logged out"}
 
 
-
-@app.get('/api/dictionary/lookup/{word}')
-async def lookup_word(word : str):
-    return {"hello":word}
 
 app.include_router(router=dictionary.router)
 
