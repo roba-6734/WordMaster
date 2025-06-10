@@ -36,3 +36,15 @@ Deliverables
 - Refactored some modules
   
 It was a success but I will try to finish my work before evening for later time and stop sleeping during day time.
+
+
+## Day 5 (10/06/2025)
+Today was a big day. I worked on the progress and quiz system
+Deliverables
+- Smart Learning - Words appear for review at optimal intervals
+- Adaptive Quizzes - Generated based on what users need to practice
+- Progress Analytics - Users can see their learning journey
+- Multiple Quiz Types - MCQ, fill-in-blank, word-to-definition
+- Performance Tracking - Accuracy, streaks, improvements
+
+I used a little bit more than needed AI but this results due to working so late and wanting to finish early. I have to arrange my sleep schedule that is key.

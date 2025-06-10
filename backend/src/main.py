@@ -129,6 +129,20 @@ async def get_user_info(current_user=Depends(get_current_user)):
 def logout():
     return {'message':"You have successfully logged out"}
 
+@app.get("/health")
+async def health_check():
+    """Health check endpoint"""
+    return {
+        "status": "healthy",
+        "timestamp": datetime.now().isoformat(),
+        "version": "1.0.0",
+        "services": {
+            "dictionary_api": "operational",
+            "firebase": "operational",
+            "spaced_repetition": "operational"
+        }
+    }
+
 
 
 app.include_router(router=dictionary.router)

@@ -36,10 +36,14 @@ class QuizService:
         
         if len(candidate_words) < question_count:
             # Not enough words, adjust question count
+            original_count = question_count
             question_count = len(candidate_words)
+            
             if question_count == 0:
                 raise ValueError("No words available for quiz generation")
+            print(f"⚠️ Adjusted quiz from {original_count} to {question_count} questions (limited by available words)")
         
+       
         # Select words for quiz based on spaced repetition priority
         selected_words = self._select_quiz_words(candidate_words, question_count)
         
@@ -404,6 +408,25 @@ class QuizService:
         seconds_per_question = time_per_question.get(quiz_type, 40)
         total_seconds = question_count * seconds_per_question
         return max(1, total_seconds // 60)  # Convert to minutes, minimum 1
+    def cleanup_old_quizzes(self):
+        """Remove quizzes older than 1 hour from memory"""
+        
+        
+        
+        cutoff_time = datetime.now() - timedelta(hours=1)
+        expired_quiz_ids = []
+        
+        for quiz_id, quiz_data in self.active_quizzes.items():
+            if quiz_data["created_at"] < cutoff_time:
+                expired_quiz_ids.append(quiz_id)
+        
+        for quiz_id in expired_quiz_ids:
+            del self.active_quizzes[quiz_id]
+            print(f"🧹 Cleaned up expired quiz: {quiz_id}")
+        
+        if expired_quiz_ids:
+            print(f"🧹 Cleaned up {len(expired_quiz_ids)} expired quizzes")
+
 
 # Create global instance
 quiz_service = QuizService()
