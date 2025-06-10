@@ -4,7 +4,7 @@ from typing import Optional, List, Tuple, Dict
 from datetime import datetime, timedelta
 
 from firebase_admin import firestore
-from numpy import diff
+
 
 
 class SpacedRepetitionSevice:
@@ -33,7 +33,7 @@ class SpacedRepetitionSevice:
                             consecutive_correct: int =0) -> Tuple[datetime, int]:
         
         if is_correct:
-            new_strength = max(1+current_strength,6)
+            new_strength = min(1+current_strength,6)
             bonus_multiplier = 1 + (consecutive_correct*0.1)
             
         else:
@@ -86,3 +86,4 @@ class SpacedRepetitionSevice:
             return 1000 + strength
 
 learning_service = SpacedRepetitionSevice()
+
