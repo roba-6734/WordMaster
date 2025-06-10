@@ -1,6 +1,7 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta,timezone
 from typing import List,Optional,Dict,Any
 from firebase_admin import firestore
+
 
 from src.services import learning_service
 from src.firebase import db
@@ -13,8 +14,9 @@ class ProgressService:
         """Get existing progress or create new progress entry for a word"""
         
         # Check if progress already exists
-        progress_query = db.collection("progress").where("userId", "==", user_id).where("wordId", "==", word_id)
+        progress_query = db.collection("progress") .where("userId", "==", user_id) .where("wordId", "==", word_id)
         existing_progress = list(progress_query.stream())
+
         
         if existing_progress:
             # Return existing progress
@@ -116,7 +118,7 @@ class ProgressService:
         """Get words that are due for review"""
         
         now = datetime.now()
-        
+        print("we are inside due word function")
         # Get all progress for user where next review is due
         progress_query = (db.collection("progress")
                         .where("userId", "==", user_id)
@@ -174,7 +176,7 @@ class ProgressService:
             "reviews_total": 0
         }
         
-        now = datetime.now()
+        now = datetime.now(timezone.utc)
         today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
         week_start = today_start - timedelta(days=7)
         

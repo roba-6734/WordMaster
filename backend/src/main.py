@@ -12,6 +12,7 @@ from src.firebase import db
 from src.config import settings
 from src.routes import dictionary
 from src.routes import words
+from src.routes import progress
 
 
 app = FastAPI(
@@ -131,4 +132,5 @@ def logout():
 
 app.include_router(router=dictionary.router)
 app.include_router(router=words.router)
+app.include_router(router=progress.router)
 
