@@ -5,6 +5,7 @@ from firebase_admin import firestore
 
 from src.services import learning_service
 from src.firebase import db
+from src.utils import logging
 
 
 class ProgressService:
@@ -156,87 +157,112 @@ class ProgressService:
         return due_words
     
     async def get_learning_stats(self, user_id: str) -> Dict[str, Any]:
-        """Get comprehensive learning statistics for user"""
-        
-        # Get all progress for user
-        progress_query = db.collection("progress").where("userId", "==", user_id)
-        progress_docs = list(progress_query.stream())
-        
-        # Initialize counters
-        stats = {
-            "total_words": len(progress_docs),
-            "words_learning": 0,  # Strength 0-2
-            "words_strong": 0,    # Strength 3-5
-            "words_mastered": 0,  # Strength 6
-            "due_for_review": 0,
-            "overdue_words": 0,
-            "overall_accuracy": 0.0,
-            "reviews_today": 0,
-            "reviews_this_week": 0,
-            "reviews_total": 0
-        }
-        
-        now = datetime.now(timezone.utc)
-        today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
-        week_start = today_start - timedelta(days=7)
-        
-        total_reviews = 0
-        total_correct = 0
-        
-        for doc in progress_docs:
-            data = doc.to_dict()
-            strength = data.get("strength", 0)
-            next_review = data.get("nextReviewDate", now)
+        """Get comprehensive learning statistics"""    
+        try:
+            # Get user's progress entries
+            progress_query = db.collection("progress").where("userId", "==", user_id)
+            progress_docs = list(progress_query.stream())
             
-            # Categorize by strength
-            if strength <= 2:
-                stats["words_learning"] += 1
-            elif strength <= 5:
-                stats["words_strong"] += 1
-            else:
-                stats["words_mastered"] += 1
+            # Get user document for streak info
+            user_doc = db.collection("users").document(user_id).get()
+            user_data = user_doc.to_dict() if user_doc.exists else {}
+            user_stats = user_data.get("stats", {})
             
-            # Check if due for review
-            if next_review <= now:
-                stats["due_for_review"] += 1
-                if next_review < today_start:
-                    stats["overdue_words"] += 1
+            # Initialize stats
+            stats = {
+                "total_words": len(progress_docs),
+                "words_learning": 0,  # strength 1-3
+                "words_strong": 0,    # strength 4-5  
+                "words_mastered": 0,  # strength 6+
+                "due_for_review": 0,
+                "overdue_words": 0,
+                "overall_accuracy": 0,
+                "current_streak": user_stats.get("currentStreak", 0),  # ← ADD THIS
+                "longest_streak": user_stats.get("longestStreak", 0),   # ← ADD THIS
+                "reviews_today": 0,
+                "reviews_this_week": 0,
+                "reviews_total": 0
+            }
             
-            # Add to accuracy calculation
-            word_total = data.get("totalReviews", 0)
-            word_correct = data.get("correctReviews", 0)
-            total_reviews += word_total
-            total_correct += word_correct
-        
-        # Calculate overall accuracy
-        if total_reviews > 0:
-            stats["overall_accuracy"] = (total_correct / total_reviews) * 100
-        
-        # Get recent quiz results for time-based stats
-        recent_results = (db.collection("quiz_results")
-                        .where("userId", "==", user_id)
-                        .where("reviewDate", ">=", week_start)
-                        .stream())
-        
-        for result in recent_results:
-            result_data = result.to_dict()
-            review_date = result_data.get("reviewDate")
+            # Rest of your existing logic...
+            now = datetime.now()
+            today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+            week_start = today_start - timedelta(days=7)
             
-            if review_date:
-                if hasattr(review_date, 'timestamp'):
-                    review_datetime = datetime.fromtimestamp(review_date.timestamp(),tz=timezone.utc)
+            total_reviews = 0
+            correct_reviews = 0
+            
+            for doc in progress_docs:
+                data = doc.to_dict()
+                strength = data.get("strength", 0)
+                next_review = data.get("nextReviewDate")
+                total_word_reviews = data.get("totalReviews", 0)
+                correct_word_reviews = data.get("correctReviews", 0)
+                
+                # Categorize by strength
+                if strength <= 1:
+                    stats["words_learning"] += 1
+                elif strength <= 3:
+                    stats["words_learning"] += 1
+                elif strength <= 5:
+                    stats["words_strong"] += 1
                 else:
-                    continue
+                    stats["words_mastered"] += 1
                 
-                stats["reviews_total"] += 1
+                # Check if due for review
+                if next_review:
+                    if hasattr(next_review, 'timestamp'):
+                        next_review_dt = datetime.fromtimestamp(next_review.timestamp())
+                        if next_review_dt <= now:
+                            stats["due_for_review"] += 1
+                            if next_review_dt < today_start:
+                                stats["overdue_words"] += 1
                 
-                if review_datetime >= today_start:
-                    stats["reviews_today"] += 1
-                
-                if review_datetime >= week_start:
-                    stats["reviews_this_week"] += 1
-        
-        return stats
+                # Add to totals
+                total_reviews += total_word_reviews
+                correct_reviews += correct_word_reviews
+            
+            # Calculate overall accuracy
+            if total_reviews > 0:
+                stats["overall_accuracy"] = round((correct_reviews / total_reviews) * 100, 1)
+            
+            # Get recent review activity
+            quiz_results_query = (db.collection("quiz_results")
+                                .where("userId", "==", user_id)
+                                .where("reviewDate", ">=", today_start))
+            
+            today_results = list(quiz_results_query.stream())
+            stats["reviews_today"] = len(today_results)
+            
+            # Get week activity  
+            week_results_query = (db.collection("quiz_results")
+                                .where("userId", "==", user_id)
+                                .where("reviewDate", ">=", week_start))
+            
+            week_results = list(week_results_query.stream())
+            stats["reviews_this_week"] = len(week_results)
+            stats["reviews_total"] = total_reviews
+            
+            return stats
+            
+        except Exception as e:
+            logging.error(f"Error getting learning stats: {str(e)}")
+            # Return default stats if error
+            return {
+                "total_words": 0,
+                "words_learning": 0,
+                "words_strong": 0,
+                "words_mastered": 0,
+                "due_for_review": 0,
+                "overdue_words": 0,
+                "overall_accuracy": 0,
+                "current_streak": 0,
+                "longest_streak": 0,
+                "reviews_today": 0,
+                "reviews_this_week": 0,
+                "reviews_total": 0
+            }
+
     
     async def _update_user_stats(self, user_id: str, is_correct: bool):
         """Update user's overall statistics"""

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends, status
-from typing import List, Optional
-from datetime import datetime
+from typing import List, Optional, Dict, Any
+from datetime import datetime,timedelta
 
 from src.models import (
     ProgressCreate,
@@ -304,3 +304,152 @@ async def get_learning_stats(
             status_code=500,
             detail="Failed to get learning statistics. Please try again."
         )
+    
+@router.get("/analytics", response_model=Dict[str, Any])
+async def get_learning_analytics(
+    days: int = 30,
+    current_user = Depends(get_current_user)
+):
+    """
+    Get detailed learning analytics and insights
+    """
+    try:
+        user_id = current_user["id"]
+        
+        print(f"📊 Getting learning analytics for user {user_id} (last {days} days)")
+        
+        # Get basic stats
+        basic_stats = await progress_service.get_learning_stats(user_id)
+        
+        # Get performance trends
+        end_date = datetime.now()
+        start_date = end_date - timedelta(days=days)
+        
+        # Get quiz results for trend analysis
+        quiz_results_query = (db.collection("quiz_results")
+                             .where("userId", "==", user_id)
+                             .where("reviewDate", ">=", start_date)
+                             .order_by("reviewDate"))
+        
+        quiz_results = list(quiz_results_query.stream())
+        
+        # Analyze performance trends
+        daily_performance = {}
+        quiz_type_performance = {}
+        word_difficulty_analysis = {}
+        
+        for result_doc in quiz_results:
+            result_data = result_doc.to_dict()
+            review_date = result_data.get("reviewDate")
+            
+            if review_date and hasattr(review_date, 'timestamp'):
+                date_str = datetime.fromtimestamp(review_date.timestamp()).strftime("%Y-%m-%d")
+                quiz_type = result_data.get("quizType", "unknown")
+                is_correct = result_data.get("isCorrect", False)
+                strength_before = result_data.get("strengthBefore", 0)
+                
+                # Daily performance
+                if date_str not in daily_performance:
+                    daily_performance[date_str] = {"correct": 0, "total": 0}
+                
+                daily_performance[date_str]["total"] += 1
+                if is_correct:
+                    daily_performance[date_str]["correct"] += 1
+                
+                # Quiz type performance
+                if quiz_type not in quiz_type_performance:
+                    quiz_type_performance[quiz_type] = {"correct": 0, "total": 0}
+                
+                quiz_type_performance[quiz_type]["total"] += 1
+                if is_correct:
+                    quiz_type_performance[quiz_type]["correct"] += 1
+                
+                # Word difficulty analysis
+                difficulty_level = "easy" if strength_before >= 4 else "medium" if strength_before >= 2 else "hard"
+                
+                if difficulty_level not in word_difficulty_analysis:
+                    word_difficulty_analysis[difficulty_level] = {"correct": 0, "total": 0}
+                
+                word_difficulty_analysis[difficulty_level]["total"] += 1
+                if is_correct:
+                    word_difficulty_analysis[difficulty_level]["correct"] += 1
+        
+        # Calculate trends
+        performance_trend = []
+        for date_str, perf in sorted(daily_performance.items()):
+            accuracy = (perf["correct"] / perf["total"] * 100) if perf["total"] > 0 else 0
+            performance_trend.append({
+                "date": date_str,
+                "accuracy": round(accuracy, 1),
+                "questions_answered": perf["total"]
+            })
+        
+                # Generate insights (FIXED VERSION)
+        insights = []
+
+        # Get overall accuracy safely
+        overall_accuracy = basic_stats.get("overall_accuracy", 0)
+
+        # Overall performance insight
+        if overall_accuracy >= 80:
+            insights.append("🎉 Excellent! You're maintaining high accuracy across your vocabulary.")
+        elif overall_accuracy >= 60:
+            insights.append("👍 Good progress! Keep practicing to improve your accuracy.")
+        else:
+            insights.append("💪 Focus on reviewing words more frequently to improve retention.")
+
+        # Quiz type insights
+        best_quiz_type = max(quiz_type_performance.items(), key=lambda x: x[1]["correct"]/max(x[1]["total"], 1)) if quiz_type_performance else None
+        if best_quiz_type:
+            accuracy = best_quiz_type[1]["correct"] / best_quiz_type[1]["total"] * 100
+            insights.append(f"🎯 You perform best with {best_quiz_type[0]} quizzes ({accuracy:.1f}% accuracy).")
+
+        # Difficulty insights
+        if "hard" in word_difficulty_analysis:
+            hard_accuracy = word_difficulty_analysis["hard"]["correct"] / word_difficulty_analysis["hard"]["total"] * 100
+            if hard_accuracy < 50:
+                insights.append("📚 Consider reviewing difficult words more frequently.")
+
+        # Streak insights (SAFELY handle missing current_streak)
+        current_streak = basic_stats.get("current_streak", 0)
+        if current_streak >= 7:
+            insights.append(f"🔥 Amazing {current_streak}-day streak! Keep it up!")
+        elif current_streak >= 3:
+            insights.append(f"⭐ Great {current_streak}-day streak! You're building a good habit.")
+        elif current_streak == 0:
+            insights.append("🎯 Start a learning streak by practicing daily!")
+
+        return {
+            "basic_stats": basic_stats,
+            "performance_trend": performance_trend[-14:],  # Last 14 days
+            "quiz_type_performance": {
+                quiz_type: {
+                    "accuracy": round(perf["correct"] / perf["total"] * 100, 1) if perf["total"] > 0 else 0,
+                    "total_questions": perf["total"]
+                }
+                for quiz_type, perf in quiz_type_performance.items()
+            },
+            "difficulty_analysis": {
+                level: {
+                    "accuracy": round(perf["correct"] / perf["total"] * 100, 1) if perf["total"] > 0 else 0,
+                    "total_questions": perf["total"]
+                }
+                for level, perf in word_difficulty_analysis.items()
+            },
+            "insights": insights,
+            "recommendations": [
+                f"Review {basic_stats.get('due_for_review', 0)} words due today",
+                f"Focus on {basic_stats.get('words_learning', 0)} words still being learned",
+                "Take a quiz to practice your vocabulary" if basic_stats.get("due_for_review", 0) > 0 else "Add more words to expand your vocabulary"
+            ]
+        }
+
+        
+    except Exception as e:
+        print(f"💥 Error getting analytics: {str(e)}")
+        logging.error(f"Error getting analytics: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to get learning analytics"
+        )
+
