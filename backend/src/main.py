@@ -13,6 +13,7 @@ from src.config import settings
 from src.routes import dictionary
 from src.routes import words
 from src.routes import progress
+from src.routes import quiz
 
 
 app = FastAPI(
@@ -133,4 +134,5 @@ def logout():
 app.include_router(router=dictionary.router)
 app.include_router(router=words.router)
 app.include_router(router=progress.router)
+app.include_router(router=quiz.router)
 

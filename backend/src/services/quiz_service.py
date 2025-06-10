@@ -3,7 +3,7 @@ import uuid
 from datetime import datetime, timedelta
 from typing import List, Dict, Any, Optional, Tuple
 
-from models.quiz import (
+from src.models import (
     QuizType, QuizDifficulty, QuizQuestion, QuizOption, 
     QuizResponse, QuizResult, QuizSubmissionResponse
 )
