@@ -224,7 +224,7 @@ class ProgressService:
             
             if review_date:
                 if hasattr(review_date, 'timestamp'):
-                    review_datetime = datetime.fromtimestamp(review_date.timestamp())
+                    review_datetime = datetime.fromtimestamp(review_date.timestamp(),tz=timezone.utc)
                 else:
                     continue
                 
