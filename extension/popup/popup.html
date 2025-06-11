@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WordMaster</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <h1>📚 WordMaster</h1>
+            </div>
+        </div>
+
+        <!-- Login Section -->
+        <div class="login-section" id="loginSection">
+            <h2>Login to Your Account</h2>
+            <p class="login-description">Login to sync your vocabulary across devices</p>
+            <form id="loginForm">
+                <div class="form-group">
+                    <input type="email" id="email" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn-primary" id="loginBtn">
+                    <span class="btn-text">Login</span>
+                    <span class="btn-spinner" style="display: none;">⏳</span>
+                </button>
+            </form>
+            <div class="error-message" id="loginError" style="display: none;"></div>
+            
+            <div class="help-text">
+                <p>💡 <strong>How to use:</strong></p>
+                <ol>
+                    <li>Select any word on a webpage</li>
+                    <li>Right-click and choose "Add to WordMaster"</li>
+                    <li>The word will be added to your vocabulary automatically!</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content" id="mainContent" style="display: none;">
+            
+            <!-- User Info -->
+            <div class="user-section">
+                <div class="user-info">
+                    <span class="user-email" id="userEmail"></span>
+                    <button id="logoutBtn" class="btn-logout">Logout</button>
+                </div>
+            </div>
+
+            <!-- Stats Section -->
+            <div class="stats-section">
+                <h3>Your Progress</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalWords">-</span>
+                        <span class="stat-label">Total Words</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="dueWords">-</span>
+                        <span class="stat-label">Due Today</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="accuracy">-</span>
+                        <span class="stat-label">Accuracy</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="streak">-</span>
+                        <span class="stat-label">Day Streak</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Usage Instructions -->
+            <div class="instructions-section">
+                <h3>How to Add Words</h3>
+                <div class="instruction-steps">
+                    <div class="step">
+                        <span class="step-number">1</span>
+                        <span class="step-text">Select any word on a webpage</span>
+                    </div>
+                    <div class="step">
+                        <span class="step-number">2</span>
+                        <span class="step-text">Right-click the selected text</span>
+                    </div>
+                    <div class="step">
+                        <span class="step-number">3</span>
+                        <span class="step-text">Choose "Add to WordMaster"</span>
+                    </div>
+                    <div class="step">
+                        <span class="step-number">4</span>
+                        <span class="step-text">Word added automatically! 🎉</span>
+                    </div>
+                </div>
+                
+                <div class="tip-box">
+                    <strong>💡 Pro Tip:</strong> You can also use <kbd>Ctrl+Shift+A</kbd> to quickly add selected words!
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <button id="openAppBtn" class="btn-primary">
+                    🌐 Open Web App
+                </button>
+                <button id="refreshStatsBtn" class="btn-secondary">
+                    🔄 Refresh Stats
+                </button>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="recent-activity" id="recentActivity" style="display: none;">
+                <h3>Recent Words</h3>
+                <div class="recent-words" id="recentWords">
+                    <!-- Recent words will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div class="loading" id="loading" style="display: none;">
+            <div class="spinner"></div>
+            <span>Loading...</span>
+        </div>
+
+        <!-- Success Message -->
+        <div class="success-message" id="successMessage" style="display: none;">
+            <span id="successText"></span>
+        </div>
+
+        <!-- Error Message -->
+        <div class="error-message" id="errorMessage" style="display: none;">
+            <span id="errorText"></span>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>
