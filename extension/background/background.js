@@ -321,20 +321,27 @@ async function handleLogin(credentials) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(credentials)
+            body: JSON.stringify(credentials.body)  // Send the inner body object directly
         });
 
         const result = await response.json();
 
         if (response.ok && result.access_token) {
             await saveAuthToken(result.access_token);
-            await updateBadge();
-            return { success: true, user: result.user };
+            return { success: true, user: { email: credentials.body.email } };
         } else {
-            return { success: false, error: result.detail || 'Login failed' };
+            console.error('❌ Login failed:', result);
+            return { 
+                success: false, 
+                error: result.detail || 'Login failed. Please check your credentials.'
+            };
         }
     } catch (error) {
-        return { success: false, error: error.message };
+        console.error('❌ Login error:', error);
+        return { 
+            success: false, 
+            error: 'Network error. Please try again.'
+        };
     }
 }
 

@@ -107,6 +107,7 @@ async function checkAuthenticationStatus() {
 
 // Handle login form submission
 async function handleLogin(e) {
+    console.log("trying to login through the extension before try")
     e.preventDefault();
     
     const email = emailInput.value.trim();
@@ -122,12 +123,17 @@ async function handleLogin(e) {
     hideMessages();
     
     try {
+        console.log("trying to login through the extension")
         const response = await sendMessageToBackground('login', {
-            email: email,
+            body: {
+                email: email,
             password: password
+            }
+            
         });
         
         if (response.success) {
+            console.log("Login Successful")
             showSuccess('Login successful!');
             showMainContent(response.user);
             await loadUserStats();
@@ -135,6 +141,7 @@ async function handleLogin(e) {
             // Clear form
             loginForm.reset();
         } else {
+            console.log("Login failed ", response.error)
             showError(response.error || 'Login failed');
         }
     } catch (error) {

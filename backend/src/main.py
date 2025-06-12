@@ -107,6 +107,7 @@ async def login(userLogin:UserLogin):
     
        
     except Exception as e:
+        print(f"🔍 Validation Error: {e}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password",
