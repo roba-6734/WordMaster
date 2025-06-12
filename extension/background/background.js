@@ -314,34 +314,37 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 // Handle login from popup
+// Handle login from popup
 async function handleLogin(credentials) {
     try {
+        console.log('🔐 Attempting login with:', credentials);
+        
         const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(credentials.body)  // Send the inner body object directly
+            body: JSON.stringify({
+                email: credentials.email,
+                password: credentials.password
+            })
         });
 
         const result = await response.json();
+        console.log('Response.ok', response.ok)
+        console.log('🔐 Login response:', result);
 
         if (response.ok && result.access_token) {
             await saveAuthToken(result.access_token);
-            return { success: true, user: { email: credentials.body.email } };
+            await updateBadge();
+            return { success: true, user: result.user };
         } else {
             console.error('❌ Login failed:', result);
-            return { 
-                success: false, 
-                error: result.detail || 'Login failed. Please check your credentials.'
-            };
+            return { success: false, error: result.detail || 'Login failed' };
         }
     } catch (error) {
-        console.error('❌ Login error:', error);
-        return { 
-            success: false, 
-            error: 'Network error. Please try again.'
-        };
+        console.error('❌ Login network error:', error);
+        return { success: false, error: error.message };
     }
 }
 

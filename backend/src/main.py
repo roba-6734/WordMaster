@@ -100,9 +100,10 @@ async def login(userLogin:UserLogin):
         })
 
         return {
-            'access token': user.uid,
-            'token type': 'bearer',
-            'user_id':user.uid
+            'access_token': user.uid,
+            'token_type': 'bearer',
+            'user_id':user.uid,
+            
         }
     
        

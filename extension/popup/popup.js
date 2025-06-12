@@ -64,7 +64,7 @@ function setupEventListeners() {
     
     // Open web app button
     openAppBtn.addEventListener('click', () => {
-        chrome.tabs.create({ url: 'http://localhost:3000' } ); // Update with your web app URL
+        chrome.tabs.create({ url: 'http://localhost:5000' } ); // Update with your web app URL
     });
     
     // Refresh stats button
@@ -125,11 +125,10 @@ async function handleLogin(e) {
     try {
         console.log("trying to login through the extension")
         const response = await sendMessageToBackground('login', {
-            body: {
+            credentials: {
                 email: email,
-            password: password
+                password: password
             }
-            
         });
         
         if (response.success) {
