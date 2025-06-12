@@ -48,3 +48,18 @@ Deliverables
 - Performance Tracking - Accuracy, streaks, improvements
 
 I used a little bit more than needed AI but this results due to working so late and wanting to finish early. I have to arrange my sleep schedule that is key.
+
+## Day 6 (11/06/2025)
+Today was not the best but we got the extension started tho
+Deliverables
+- Created the extension boilerplate
+- Refactored main
+  
+
+## Day 7 ( 12/06/2025)
+Today I fixed some bugs associated with the extension
+Deliverables
+- Complete Extension UI
+- Complete sync between the extension and web app
+- lookup functionality added
+  

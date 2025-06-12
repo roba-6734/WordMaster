@@ -323,7 +323,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
 });
 
-// Handle login from popup
+
 // Handle login from popup
 async function handleLogin(credentials) {
     try {

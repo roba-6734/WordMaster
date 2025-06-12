@@ -278,8 +278,9 @@ async def get_learning_stats(
         user_data = user_doc.to_dict() if user_doc.exists else {}
         user_stats = user_data.get("stats", {})
         
+        
         stats = LearningStats(
-            total_words=stats_data["total_words"],
+            total_words_added=user_stats["total_words_added"],
             words_learning=stats_data["words_learning"],
             words_strong=stats_data["words_strong"],
             words_mastered=stats_data["words_mastered"],
@@ -293,7 +294,7 @@ async def get_learning_stats(
             reviews_total=stats_data["reviews_total"]
         )
         
-        print(f"📊 Stats: {stats.total_words} words, {stats.due_for_review} due")
+        print(f"📊 Stats: {stats.total_words_added} words, {stats.due_for_review} due")
         
         return stats
         

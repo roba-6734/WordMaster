@@ -173,7 +173,7 @@ class ProgressService:
             
             # Initialize stats
             stats = {
-                "total_words": len(progress_docs),
+                "total_words_added": len(progress_docs),
                 "words_learning": 0,  # strength 1-3
                 "words_strong": 0,    # strength 4-5  
                 "words_mastered": 0,  # strength 6+

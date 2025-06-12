@@ -61,7 +61,7 @@ async def add_word(word_data: WordCreate, current_user = Depends(get_current_use
         word_id = doc_ref[1].id
         user_ref = db.collection("users").document(user_id)
         user_ref.update({
-            "stats.totalWordsAdded": firestore.Increment(1)
+            "stats.total_words_added": firestore.Increment(1)
         })
         response_data = WordResponse(
             id=word_id,

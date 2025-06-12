@@ -190,7 +190,7 @@ async function loadUserStats() {
 
 // Update stats display
 function updateStatsDisplay(stats) {
-    totalWordsEl.textContent = stats.total_words || 0;
+    totalWordsEl.textContent = stats.total_words_added || 0;
     dueWordsEl.textContent = stats.due_today || 0;
     accuracyEl.textContent = stats.overall_accuracy ? `${Math.round(stats.overall_accuracy)}%` : '0%';
     streakEl.textContent = stats.current_streak || 0;

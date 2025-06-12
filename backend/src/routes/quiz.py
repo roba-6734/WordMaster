@@ -88,6 +88,10 @@ async def submit_quiz(
             answers=answers_dict,
             total_time_ms=submission.total_time_ms
         )
+
+        db.collection('users').document(user_id).update({
+            "stats.total_quizzes_taken":firestore.Increment(1)
+        })
         
         print(f"✅ Quiz submitted: {result.score}/{result.total_questions} ({result.accuracy:.1f}%)")
         
