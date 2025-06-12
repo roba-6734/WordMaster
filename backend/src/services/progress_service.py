@@ -15,7 +15,10 @@ class ProgressService:
         """Get existing progress or create new progress entry for a word"""
         
         # Check if progress already exists
-        progress_query = db.collection("progress") .where("userId", "==", user_id) .where("wordId", "==", word_id)
+        progress_query = db.collection("progress").filter(
+            "userId", "==", user_id,
+            "wordId", "==", word_id
+        )
         existing_progress = list(progress_query.stream())
 
         
@@ -227,9 +230,11 @@ class ProgressService:
                 stats["overall_accuracy"] = round((correct_reviews / total_reviews) * 100, 1)
             
             # Get recent review activity
-            quiz_results_query = (db.collection("quiz_results")
-                                .where("userId", "==", user_id)
-                                .where("reviewDate", ">=", today_start))
+           
+            quiz_results_query = (db.collection('quiz_results').filter(
+                "userId", "==", user_id,
+                "reviewDate", ">=", today_start
+            ))
             
             today_results = list(quiz_results_query.stream())
             stats["reviews_today"] = len(today_results)
