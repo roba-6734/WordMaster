@@ -74,7 +74,7 @@ function setupEventListeners() {
     const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
             if (mutation.target === loginSection && loginSection.style.display !== 'none') {
-                setTimeout(() => emailInput.focus(), 100);
+                setTimeout(() => emailInput.focus(), 1000);
             }
         });
     });
@@ -107,7 +107,7 @@ async function checkAuthenticationStatus() {
 
 // Handle login form submission
 async function handleLogin(e) {
-    console.log("trying to login through the extension before try")
+    
     e.preventDefault();
     
     const email = emailInput.value.trim();
@@ -123,7 +123,7 @@ async function handleLogin(e) {
     hideMessages();
     
     try {
-        console.log("trying to login through the extension")
+        
         const response = await sendMessageToBackground('login', {
             credentials: {
                 email: email,

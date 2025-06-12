@@ -10,7 +10,7 @@ from src.utils import logging
 class DictionaryService:
     def __init__(self ):
         self.base_url = "https://api.dictionaryapi.dev/api/v2/entries/en"
-        self.timeout = 10
+        self.timeout = 1000
 
     async def lookup_word(self, word: str ) -> Optional[Dict[str,Any]] :
         try:

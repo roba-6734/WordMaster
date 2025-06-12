@@ -8,7 +8,7 @@ const API_BASE_URL = 'http://localhost:5000';  // Update for production
 // Context menu IDs
 const CONTEXT_MENU_IDS = {
     ADD_WORD: 'add-word-to-vocabulary',
-    LOOKUP_WORD: 'lookup-word-definition'
+     LOOKUP_WORD: 'lookup-word-definition'
 };
 
 // Initialize extension
@@ -134,10 +134,20 @@ async function handleLookupWord(word, tab) {
     
     // Show loading notification
     await showNotification(tab.id, `Looking up "${word}"...`, 'loading');
+    const authToken = await getAuthToken();
+    if (!authToken) {
+        await showNotification(tab.id, 'Please login first by clicking the WordMaster icon', 'warning');
+        return;
+    }
 
     try {
         // Call dictionary API directly (no auth needed for lookup)
-        const response = await fetch(`${API_BASE_URL}/api/dictionary/lookup?word=${encodeURIComponent(word)}`);
+        const response = await fetch(`${API_BASE_URL}/api/dictionary/lookup/${encodeURIComponent(word)}`,{
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            }});
         const result = await response.json();
 
         if (response.ok && result.success) {
@@ -190,7 +200,7 @@ async function clearAuthToken() {
 }
 
 // Show notification to user on the page
-async function showNotification(tabId, message, type = 'info', duration = 4000) {
+async function showNotification(tabId, message, type = 'info', duration = 3000) {
     try {
         await chrome.scripting.executeScript({
             target: { tabId: tabId },
