@@ -43,9 +43,11 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     //eslint-disable-next-line no-useless-catch
     try {
+      console.log("We are inside authcontext");
       const result = await apiService.login(email, password);
       setUser(result.user);
       setIsAuthenticated(true);
+      console.log("We are inside authcontext and we got the result")
       return result;
     } catch (error) {
       throw error;

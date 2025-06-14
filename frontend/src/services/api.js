@@ -9,10 +9,10 @@ class ApiService {
     setToken(token){
         this.token = token
         if (token){
-            localStorage.set('AuthToken',token)
+            localStorage.setItem('AuthToken',token)
         }
         else{
-            localStorage.remove('AuthToken')
+            localStorage.removeItem('AuthToken')
         }
     }
 
@@ -28,8 +28,9 @@ class ApiService {
     }
     
     async login(email,password){
+        console.log('inside login before fetch')
         const response= await fetch(`${API_BASE_URL}/api/auth/login`,{
-            methods:'POST',
+            method:'POST',
             headers:this.getHeaders(),
             body:JSON.stringify({
                 email,
@@ -38,8 +39,11 @@ class ApiService {
 
         })
         const data  = await response.json();
+        console.log("we got data, this is the data")
         if (response.ok && data.access_token){
-            this.setToken(data.access_token)
+            this.setToken(data.access_token);
+            console.log('we are fetching user data and it was successful')
+
             return {
                 success:true,
                 user:data,
@@ -88,6 +92,20 @@ class ApiService {
             throw new Error(response.detail || "Failed to get user info")
         }
 
+    }
+    async getStats(){
+        try{
+        const response = await fetch(`${API_BASE_URL}/api/progress/stats`,{
+            headers:this.getHeaders()
+        })
+        if(response.ok){
+            return response.json()
+        }
+     }
+        catch(error){
+            throw new Error(error.detail || "Failed to fetch user stats")
+        }
+        
     }
 
     logout(){

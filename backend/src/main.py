@@ -94,7 +94,7 @@ async def login(userLogin:UserLogin):
         user = auth.get_user_by_email(userLogin.email)
 
         
-        print(user)
+        
         db.collection('users').document(user.uid).update({
             'lastLoginAt':firestore.SERVER_TIMESTAMP
         })

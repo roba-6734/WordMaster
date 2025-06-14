@@ -26,7 +26,9 @@ const LoginPage = () => {
     setError('');
 
     try {
-      await login(email, password);
+      console.log('We are inside the handle submit now')
+      const result = await login(email, password);
+      console.log(result)
       navigate(from, { replace: true });
     } catch (err) {
       setError(err.message || 'Login failed');

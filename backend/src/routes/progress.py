@@ -268,7 +268,7 @@ async def get_learning_stats(
     try:
         user_id = current_user["id"]
         
-        print(f"📈 Getting learning stats for user {user_id}")
+        #print(f"📈 Getting learning stats for user {user_id}")
         
         # Get stats from progress service
         stats_data = await progress_service.get_learning_stats(user_id)
@@ -294,7 +294,7 @@ async def get_learning_stats(
             reviews_total=stats_data["reviews_total"]
         )
         
-        print(f"📊 Stats: {stats.total_words_added} words, {stats.due_for_review} due")
+        #print(f"📊 Stats: {stats.total_words_added} words, {stats.due_for_review} due")
         
         return stats
         

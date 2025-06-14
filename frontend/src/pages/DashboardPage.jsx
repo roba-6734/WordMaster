@@ -32,8 +32,8 @@ const DashboardPage = () => {
         setStats(statsData);
 
         // Load recent words
-        const wordsData = await apiService.getWords(1, 5);
-        setRecentWords(wordsData.words || []);
+        //const wordsData = await apiService.getWords(1, 5);
+        //setRecentWords(wordsData.words || []);
       } catch (error) {
         console.error('Failed to load dashboard data:', error);
       } finally {
@@ -88,7 +88,7 @@ const DashboardPage = () => {
             <BookOpen className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats?.total_words || 0}</div>
+            <div className="text-2xl font-bold">{stats?.total_words_added || 0}</div>
             <p className="text-xs text-muted-foreground">
               +{stats?.words_this_week || 0} this week
             </p>
