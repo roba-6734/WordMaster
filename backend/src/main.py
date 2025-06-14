@@ -4,9 +4,9 @@ from firebase_admin import firestore,auth
 from fastapi import FastAPI,Depends, HTTPException, status, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer,OAuth2PasswordRequestForm
+from dotenv import load_dotenv
 
-from src.utils import create_firebase_user, verify_firebase_token, get_current_user, CustomException
-
+from src.utils import create_firebase_user, verify_firebase_token, get_current_user, CustomException,login_user
 from src.models import UserCreate,UserLogin,UserResponse
 from src.firebase import db
 from src.config import settings
@@ -91,18 +91,22 @@ async def register_user(user:UserCreate):
           description="Authenticate user and return access token")
 async def login(userLogin:UserLogin):
     try:
-        user = auth.get_user_by_email(userLogin.email)
+        user_data = login_user(userLogin.email,userLogin.password)
+        id_token = user_data['idToken']
+        decoded_token = await get_current_user(id_token)
+
+        user_id =decoded_token['id']
 
         
         
-        db.collection('users').document(user.uid).update({
+        db.collection('users').document(user_id).update({
             'lastLoginAt':firestore.SERVER_TIMESTAMP
         })
 
         return {
-            'access_token': user.uid,
+            'access_token': id_token,
             'token_type': 'bearer',
-            'user_id':user.uid,
+            'user_id':user_id,
             
         }
     

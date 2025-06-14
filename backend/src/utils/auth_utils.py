@@ -1,16 +1,21 @@
+from email import header
 from typing import Optional
 from datetime import datetime, timedelta
+import os
+import requests
 
 from firebase_admin import auth
 from firebase_admin.exceptions import FirebaseError
 from passlib.context import CryptContext
 from fastapi import HTTPException, Depends, status
 from fastapi.security import OAuth2PasswordBearer
+from dotenv import load_dotenv
+
 
 from src.utils.exception import CustomException
 from src.firebase import db
 
-
+load_dotenv()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/api/user/login')
 pwd_context =CryptContext(schemes=['bcrypt'],deprecated='auto')
 
@@ -48,26 +53,48 @@ def verify_firebase_token(custom_token):
     except Exception as e:
         raise CustomException(e)
         
+def login_user(email, password):
+    try:
+        firebase_url = f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={os.getenv('FIREBASE_API_KEY')}"
+        payload = {
+            "email": email,
+            "password":password,
+            "returnSecureToken": True
+        }
+        response = requests.post(firebase_url,json=payload)
+        if response.status_code !=200:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail= "Invalid email or password",
+                headers={"www-authenticat":"Bearer"},
+            )
+        return response.json()
+    except Exception as e:
+        raise CustomException(e)
+
+
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
-        headers={"Authorization": "Bearer"},  # Tells client how to authenticate
+        headers={"WWW-Authenticate": "Bearer"},
     )
-    
+
     try:
-        user_id = token
-        if not user_id:  # Check for empty token
-            raise credentials_exception
-            
+        # 🔐 Step 1: Verify the Firebase ID token
+        decoded_token = auth.verify_id_token(token)
+        user_id = decoded_token["uid"]
+
+        # 🔍 Step 2: Check if user exists in Firestore
         user_doc = db.collection("users").document(user_id).get()
-        if not user_doc.exists:  # User doesn't exist
-            raise credentials_exception  # Same error for security
-        
+        if not user_doc.exists:
+            raise credentials_exception
+
         user_data = user_doc.to_dict()
         user_data["id"] = user_id
         return user_data
-        
-    except Exception:  # Any other error
-        raise credentials_exception  # Always same error
+
+    except Exception as e:
+        print(f"Auth error: {e}")
+        raise credentials_exception
