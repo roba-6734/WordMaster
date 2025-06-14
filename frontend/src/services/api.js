@@ -42,6 +42,7 @@ class ApiService {
             this.setToken(data.access_token)
             return {
                 success:true,
+                user:data,
                 token:data.access_token
             }
         }
