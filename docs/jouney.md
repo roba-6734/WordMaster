@@ -62,4 +62,19 @@ Deliverables
 - Complete Extension UI
 - Complete sync between the extension and web app
 - lookup functionality added
+
+## Day 8 (13/06/2025)
+Today, I have not finished that much tasks due to other priorities.
+Deliverables
+- Boilerplate for the UI
+- Code review
+  
+## Day 9 (14/06/2025)
+Today was best. I compensated for yesterday's low performance.
+Deliverables
+- Implemented UI for Authentication, Dashboard 
+- Integerated the Dashboard and authentication UI with the backend
+- Developed client side api service to be a single point of communication to the backend
+  
+The credits are becoming the issue now today. I have got only around 200 credits left so it is impacting my performance.
   
