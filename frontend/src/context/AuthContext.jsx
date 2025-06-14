@@ -4,15 +4,15 @@ import apiService from './../services/api.js'
 
 const AuthContext = createContext();
 
-const useAuth = () =>{
+export const useAuth = () => {
     const context = useContext(AuthContext);
     if(!context){
         throw new Error('useAuth must be used inside AuthProvider')
     }
     return context;
-}
+};
 
-const AuthProvider = ({children}) =>{
+export const AuthProvider = ({children}) =>{
 
     const [user,setUser] = useState(null);
     const [loading,setLoading] = useState(true);
