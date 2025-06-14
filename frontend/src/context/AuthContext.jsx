@@ -56,7 +56,30 @@ const AuthProvider = ({children}) =>{
 
     }
     const register = async (email,password,display_name) =>{
-        
+        //eslint-disable-next-line no-useless-catch
+        try{
+            const response = apiService.register(email,password,display_name)
+            return response
+
+        }catch(error){
+            throw error
+        }
+
     }
+
+    const logout = () =>{
+        apiService.logout()
+        setUser(null)
+        setIsAuthenticated(false)
+    }
+
+    const value = {
+        register,login, logout, user, loading, isAuthenticated}
+    
+    return (
+        <AuthContext.Provider value = {value}>
+            {children}
+        </AuthContext.Provider>
+    );
 
 }
