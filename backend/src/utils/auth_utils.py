@@ -83,7 +83,8 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 
     try:
         # 🔐 Step 1: Verify the Firebase ID token
-        decoded_token = auth.verify_id_token(token)
+        decoded_token =verify_firebase_token(token)
+        
         user_id = decoded_token["uid"]
 
         # 🔍 Step 2: Check if user exists in Firestore
