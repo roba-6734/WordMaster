@@ -49,6 +49,7 @@ const WordsPage = () => {
     try {
       setLoading(true);
       const response = await apiService.getWords(currentPage, 20, searchTerm);
+      console.log(response)
       setWords(response.words || []);
       setTotalPages(response.total_pages || 1);
     } catch (error) {

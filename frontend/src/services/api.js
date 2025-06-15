@@ -108,19 +108,26 @@ class ApiService {
         
     }
     async getWords(pageNo,wordPerPage,searchTerm){
+        const queryParams = new URLSearchParams({
+      page: pageNo,
+      per_page: wordPerPage,
+      search: searchTerm
+    }).toString();
         try{
-            const response = await fetch(`${API_BASE_URL}/api/words`,{
-                headers:this.getHeaders(),
-                body: JSON.stringify({
-                    page:pageNo,
-                    per_page:wordPerPage,
-                    search:searchTerm
-                })
-            });
-            if(response.ok){
-                return response.json()
+            console.log("Trying to get words")
+            const response = await fetch(`${API_BASE_URL}/api/words?${queryParams}`,{
+                method:'GET',
+                headers:this.getHeaders()})
+
+            
+           if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.detail || 'Error fetching words');
             }
+            return response.json();
+
         }catch(error){
+            console.log(error)
             throw new Error(error.detail || "Failed to fetch words")
         }
     }
