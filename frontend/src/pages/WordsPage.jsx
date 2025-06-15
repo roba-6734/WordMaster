@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import apiService from '../services/api.js';
+import AddWordModal from '../components/AddWordModal';
+import WordDetailsModal from '../components/WordDetailsModal';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -40,6 +42,7 @@ const WordsPage = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedWord, setSelectedWord] = useState(null);
+  
 
   useEffect(() => {
     loadWords();
@@ -131,6 +134,23 @@ const WordsPage = () => {
     if (level >= 2) return 'bg-orange-500';
     return 'bg-red-500';
   };
+
+  const handleWordAdded = () => {
+  loadWords(); // Refresh the word list
+};
+const handleEditWord = (word) => {
+  // You can implement edit functionality later
+  console.log('Edit word:', word);
+};
+const handleDeleteWord = async (wordId) => {
+  // Implement delete functionality
+  await apiService.deleteWord(wordId);
+  loadWords();
+};
+const handleStudyWord = (word) => {
+  // Navigate to study mode with this word
+  console.log('Study word:', word);
+};
 
   if (loading) {
     return (
@@ -350,6 +370,21 @@ const WordsPage = () => {
           </Button>
         </div>
       )}
+      <AddWordModal 
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onWordAdded={handleWordAdded}
+        />
+
+        {/* Word Details Modal */}
+        <WordDetailsModal 
+        isOpen={!!selectedWord}
+        onClose={() => setSelectedWord(null)}
+        word={selectedWord}
+        onEdit={handleEditWord}
+        onDelete={handleDeleteWord}
+        onStudy={handleStudyWord}
+        />
     </div>
   );
 };
