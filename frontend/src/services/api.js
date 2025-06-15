@@ -107,7 +107,23 @@ class ApiService {
         }
         
     }
-    
+    async getWords(pageNo,wordPerPage,searchTerm){
+        try{
+            const response = await fetch(`${API_BASE_URL}/api/words`,{
+                headers:this.getHeaders(),
+                body: JSON.stringify({
+                    page:pageNo,
+                    per_page:wordPerPage,
+                    search:searchTerm
+                })
+            });
+            if(response.ok){
+                return response.json()
+            }
+        }catch(error){
+            throw new Error(error.detail || "Failed to fetch words")
+        }
+    }
 
     logout(){
         this.setToken(null)
