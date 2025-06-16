@@ -262,7 +262,7 @@ const handleStudyWord = (word) => {
       {/* Words Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredWords.map((word) => (
-          <Card key={word.id} className="hover:shadow-md transition-shadow">
+          <Card key={word.id} className="hover:shadow-md transition-shadow hover:cursor-pointer " onClick ={()=>(setSelectedWord(word))}>
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
@@ -283,7 +283,8 @@ const handleStudyWord = (word) => {
                 </div>
                 
                 <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
+                  <DropdownMenuTrigger asChild onClick = {(e) =>{e.stopPropagation();}} 
+                  >
                     <Button variant="ghost" size="sm">
                       <MoreVertical className="h-4 w-4" />
                     </Button>
