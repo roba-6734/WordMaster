@@ -191,7 +191,7 @@ const WordDetailsModal = ({ isOpen, onClose, word, onEdit, onDelete, onStudy }) 
                 <div className="flex items-center gap-2">
                   <Calendar className="h-3 w-3 text-muted-foreground" />
                   <span className="text-muted-foreground">Added:</span>
-                  <span>{new Date(word.created_at).toLocaleDateString()}</span>
+                  <span>{new Date(word.added_at).toLocaleDateString()}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Target className={`h-3 w-3 ${isOverdue ? 'text-red-500' : 'text-muted-foreground'}`} />
@@ -220,8 +220,8 @@ const WordDetailsModal = ({ isOpen, onClose, word, onEdit, onDelete, onStudy }) 
               Definitions
             </h3>
             
-            <div className="space-y-4">
-              {word.definitions?.map((def, index) => (
+           <div className="space-y-4">
+            {word.definitions?.slice(0, 3).map((def, index) => (
                 <div key={index} className="border-l-4 border-primary/20 pl-4">
                   <div className="flex items-start gap-2">
                     <Badge variant="outline" className="text-xs mt-0.5">
@@ -240,7 +240,8 @@ const WordDetailsModal = ({ isOpen, onClose, word, onEdit, onDelete, onStudy }) 
               )) || (
                 <p className="text-muted-foreground">No definitions available</p>
               )}
-            </div>
+           </div>
+
           </div>
 
           {/* Study Statistics */}
