@@ -20,6 +20,8 @@ class DictionaryService:
                 if response.status_code == 200:
                     data = response.json()
                     formatted_data = self._format_word_data(data[0])
+                    add_word_endpoint = "http://localhost:5000/api/word"
+                    
                     return formatted_data
                 elif response.status_code == 404:
                     logging.info(f"The word: {word} is not found in the dictionary")

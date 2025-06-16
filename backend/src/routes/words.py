@@ -76,7 +76,7 @@ async def add_word(word_data: WordCreate, current_user = Depends(get_current_use
             antonyms=dictionary_data["antonyms"],
             user_notes=word_data.user_notes,
             is_favorite=False,
-            difficulty_level=None
+            difficulty_level='intermediate'
         )
         logging.info("Word Added successfully")
         return WordCreateResponse(

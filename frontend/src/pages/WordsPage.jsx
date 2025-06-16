@@ -319,7 +319,7 @@ const handleStudyWord = (word) => {
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
                   <Calendar className="h-3 w-3" />
-                  Added {new Date(word.created_at).toLocaleDateString()}
+                  Added {new Date(word.added_at).toLocaleDateString()}
                 </div>
                 <div className="flex items-center gap-1">
                   <Target className="h-3 w-3" />

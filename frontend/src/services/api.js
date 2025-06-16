@@ -122,19 +122,42 @@ class ApiService {
             
            if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.detail || 'Error fetching words');
+            throw new Error(errorData.message || 'Error fetching words');
             }
             return response.json();
 
         }catch(error){
             console.log(error)
-            throw new Error(error.detail || "Failed to fetch words")
+            throw new Error(error.message || "Failed to fetch words")
+        }
+    }
+
+    async addWord(word){
+        try{
+            const response = await fetch(`${API_BASE_URL}/api/words/`,{
+                method:'POST',
+                headers:this.getHeaders(),
+                body:JSON.stringify({
+                    word
+                })
+            });
+            if(!response.ok){
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Error fetching words');
+            }
+            console.log(response)
+            return response.json()
+
+
+        }catch(error){
+            throw new Error(error.message || "Failed to add the word")
         }
     }
 
     logout(){
         this.setToken(null)
     }
+
 
 }
 const apiService = new ApiService()
