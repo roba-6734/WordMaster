@@ -71,6 +71,7 @@ const WordDetailsModal = ({ isOpen, onClose, word, onEdit, onDelete, onStudy }) 
       // In a real app, this would use text-to-speech or audio file
       const utterance = new SpeechSynthesisUtterance(word.word);
       utterance.rate = 0.8;
+      utterance.lang = 'en-GB'
       utterance.onend = () => setPlayingAudio(false);
       speechSynthesis.speak(utterance);
     } catch (error) {
