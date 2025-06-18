@@ -9,8 +9,6 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import AnimatedFlashcard from '../components/AnimatedFlashcard';
 import { 
   Brain, 
-  RotateCcw, 
-  Volume2, 
   CheckCircle, 
   XCircle,
   Clock,
@@ -18,7 +16,6 @@ import {
   TrendingUp,
   Home,
   RefreshCw,
-  Zap,
   Award,
   BookOpen
 } from 'lucide-react';
@@ -71,7 +68,10 @@ const StudyPage = () => {
     {
       id: 1,
       word: "serendipity",
-      definitions: [{ definition: "The occurrence of events by chance in a happy way" }],
+      definitions: [{ 
+        definition: "The occurrence of events by chance in a happy way",
+        example: "It was pure serendipity that led me to find my dream job while browsing social media."
+      }],
       difficulty: "intermediate",
       mastery_level: 2,
       pronunciation: "/ˌserənˈdipədē/"
@@ -79,7 +79,10 @@ const StudyPage = () => {
     {
       id: 2,
       word: "ephemeral",
-      definitions: [{ definition: "Lasting for a very short time" }],
+      definitions: [{ 
+        definition: "Lasting for a very short time",
+        example: "The beauty of cherry blossoms is ephemeral, lasting only a few weeks each spring."
+      }],
       difficulty: "advanced",
       mastery_level: 1,
       pronunciation: "/əˈfem(ə)rəl/"
@@ -87,7 +90,10 @@ const StudyPage = () => {
     {
       id: 3,
       word: "ubiquitous",
-      definitions: [{ definition: "Present, appearing, or found everywhere" }],
+      definitions: [{ 
+        definition: "Present, appearing, or found everywhere",
+        example: "Smartphones have become ubiquitous in modern society."
+      }],
       difficulty: "advanced",
       mastery_level: 3,
       pronunciation: "/yo͞oˈbikwədəs/"
@@ -95,7 +101,10 @@ const StudyPage = () => {
     {
       id: 4,
       word: "mellifluous",
-      definitions: [{ definition: "Sweet or musical; pleasant to hear" }],
+      definitions: [{ 
+        definition: "Sweet or musical; pleasant to hear",
+        example: "The singer's mellifluous voice captivated the entire audience."
+      }],
       difficulty: "advanced",
       mastery_level: 1,
       pronunciation: "/məˈliflo͞oəs/"
@@ -103,7 +112,10 @@ const StudyPage = () => {
     {
       id: 5,
       word: "perspicacious",
-      definitions: [{ definition: "Having keen insight; mentally sharp" }],
+      definitions: [{ 
+        definition: "Having keen insight; mentally sharp",
+        example: "Her perspicacious analysis of the market trends impressed the board of directors."
+      }],
       difficulty: "advanced",
       mastery_level: 2,
       pronunciation: "/ˌpərspəˈkāSHəs/"
@@ -176,15 +188,6 @@ const StudyPage = () => {
     setSessionStats({ correct: 0, incorrect: 0, total: studyWords.length });
     setSessionComplete(false);
     loadStudySession();
-  };
-
-  const getDifficultyColor = (difficulty) => {
-    switch (difficulty) {
-      case 'beginner': return 'bg-green-100 text-green-800';
-      case 'intermediate': return 'bg-yellow-100 text-yellow-800';
-      case 'advanced': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
   };
 
   if (loading) {
@@ -357,80 +360,17 @@ const StudyPage = () => {
         </CardContent>
       </Card>
 
-      {/* Flashcard */}
-      <Card className="mb-6 min-h-[400px] cursor-pointer" onClick={handleFlipCard}>
-        <CardContent className="p-8 flex flex-col items-center justify-center text-center min-h-[400px]">
-          {!showDefinition ? (
-            // Front of card - Word
-            <div className="space-y-4">
-              <Badge className={getDifficultyColor(currentWord?.difficulty)}>
-                {currentWord?.difficulty}
-              </Badge>
-              
-              <h2 className="text-4xl md:text-5xl font-bold text-primary">
-                {currentWord?.word}
-              </h2>
-              
-              {currentWord?.pronunciation && (
-                <div className="flex items-center justify-center gap-2">
-                  <p className="text-lg text-muted-foreground">
-                    {currentWord.pronunciation}
-                  </p>
-                  <Button variant="ghost" size="sm" onClick={(e) => {
-                    e.stopPropagation();
-                    playPronunciation();
-                  }}>
-                    <Volume2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              )}
-              
-              <p className="text-muted-foreground">
-                Click to reveal definition
-              </p>
-            </div>
-          ) : (
-            // Back of card - Definition
-            <div className="space-y-6">
-              <h3 className="text-2xl font-bold text-primary">
-                {currentWord?.word}
-              </h3>
-              
-              <div className="space-y-4">
-                {currentWord?.definitions?.map((def, index) => (
-                  <div key={index} className="text-lg">
-                    <p className="mb-2">{def.definition}</p>
-                    {def.example && (
-                      <p className="text-muted-foreground italic">
-                        "{def.example}"
-                      </p>
-                    )}
-                  </div>
-                ))}
-              </div>
-              
-              <p className="text-sm text-muted-foreground">
-                How well did you know this word?
-              </p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      {/* Animated Flashcard */}
+      <AnimatedFlashcard 
+        word={currentWord}
+        onFlip={handleFlipCard}
+        isFlipped={showDefinition}
+        onPronounce={playPronunciation}
+      />
 
       {/* Action Buttons */}
-      <div className="flex justify-center gap-4">
-        {!showDefinition ? (
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={handleFlipCard}>
-              <RotateCcw className="h-4 w-4 mr-2" />
-              Reveal Definition
-            </Button>
-            <Button variant="ghost" onClick={playPronunciation}>
-              <Volume2 className="h-4 w-4 mr-2" />
-              Pronounce
-            </Button>
-          </div>
-        ) : (
+      <div className="flex justify-center gap-4 mb-6">
+        {showDefinition && (
           <div className="flex gap-2">
             <Button 
               variant="outline" 
@@ -463,7 +403,7 @@ const StudyPage = () => {
       </div>
 
       {/* Session Stats */}
-      <Card className="mt-6">
+      <Card>
         <CardContent className="p-4">
           <div className="grid grid-cols-3 gap-4 text-center text-sm">
             <div>
