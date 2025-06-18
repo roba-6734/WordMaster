@@ -6,7 +6,9 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import WordsPage from './pages/WordsPage';
+import StudyPage from './pages/StudyPage';
 import './App.css';
+
 
 function App() {
   return (
@@ -38,10 +40,7 @@ function App() {
           <Route path="/study" element={
             <ProtectedRoute>
               <Layout>
-                <div className="container mx-auto p-6">
-                  <h1 className="text-3xl font-bold">Study Session</h1>
-                  <p className="text-muted-foreground mt-2">Coming soon...</p>
-                </div>
+                <StudyPage />
               </Layout>
             </ProtectedRoute>
           } />
