@@ -76,7 +76,7 @@ const AnimatedFlashcard = ({ word, onFlip, isFlipped, onPronounce }) => {
             </h3>
             
             <div className="definitions-container">
-              {word?.definitions?.map((def, index) => (
+              {word?.definitions?.slice(0,2).map((def, index) => (
                 <div key={index} className="definition-item">
                   <p className="definition-text">{def.definition}</p>
                   {def.example && (

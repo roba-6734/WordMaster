@@ -107,7 +107,7 @@ class ApiService {
         }
         
     }
-    async getWords(pageNo,wordPerPage,searchTerm){
+    async getWords(pageNo=1,wordPerPage=20,searchTerm=''){
         const queryParams = new URLSearchParams({
       page: pageNo,
       per_page: wordPerPage,

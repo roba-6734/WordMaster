@@ -45,9 +45,10 @@ const StudyPage = () => {
   const loadStudySession = async () => {
     try {
       setLoading(true);
-      const response = await apiService.getStudyWords();
+      const response = await apiService.getWords();
       
       if (response.words && response.words.length > 0) {
+        
         setStudyWords(response.words);
         setSessionStats(prev => ({ ...prev, total: response.words.length }));
       } else {
