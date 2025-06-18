@@ -149,7 +149,7 @@ const handleDeleteWord = async (wordId) => {
 };
 const handleStudyWord = (word) => {
   // Navigate to study mode with this word
-  console.log('Study word:', word);
+  <Link to='/study' />
 };
 
   if (loading) {

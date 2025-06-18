@@ -66,7 +66,7 @@ const DashboardPage = () => {
         </div>
         <div className="flex gap-2">
           <Button asChild>
-            <Link to="/words/add">
+            <Link to="/words">
               <Plus className="h-4 w-4 mr-2" />
               Add Word
             </Link>

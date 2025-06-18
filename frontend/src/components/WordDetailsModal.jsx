@@ -35,6 +35,7 @@ import {
   XCircle,
   AlertCircle
 } from 'lucide-react';
+import {Link} from 'react-router-dom'; 
 
 const WordDetailsModal = ({ isOpen, onClose, word, onEdit, onDelete, onStudy }) => {
   const [loading, setLoading] = useState(false);
@@ -151,7 +152,7 @@ const WordDetailsModal = ({ isOpen, onClose, word, onEdit, onDelete, onStudy }) 
                   <Edit className="h-4 w-4 mr-2" />
                   Edit Word
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onStudy?.(word)}>
+                <DropdownMenuItem onClick={() => (<Link to='/study' />)}>
                   <Brain className="h-4 w-4 mr-2" />
                   Study Now
                 </DropdownMenuItem>
@@ -330,14 +331,18 @@ const WordDetailsModal = ({ isOpen, onClose, word, onEdit, onDelete, onStudy }) 
 
         <DialogFooter className="flex-col sm:flex-row gap-2">
           <div className="flex gap-2 w-full sm:w-auto">
+            <Link to='/study'>
             <Button 
               variant="outline" 
               onClick={() => onStudy?.(word)}
-              className="flex-1 sm:flex-none"
+              className="flex-1 sm:flex-none "
             >
+              
               <Brain className="h-4 w-4 mr-2" />
               Study Now
+            
             </Button>
+              </Link>
             <Button 
               variant="outline" 
               onClick={() => onEdit?.(word)}
