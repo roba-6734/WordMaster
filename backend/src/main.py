@@ -7,12 +7,12 @@ from fastapi.security import OAuth2PasswordBearer,OAuth2PasswordRequestForm
 from dotenv import load_dotenv
 
 from src.firebase import db
-from src.config import settings
 from src.routes import dictionary
 from src.routes import words
 from src.routes import progress
 from src.routes import quiz
 from src.routes import authentication
+from src.config import settings
 
 
 app = FastAPI(
