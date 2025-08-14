@@ -17,7 +17,7 @@ document.addEventListener('selectionchange', () => {
         lastSelectedText = selectedText;
         
         // Only log if it's a reasonable word (not too long, contains letters)
-        if (selectedText.length <= 50 && /[a-zA-Z]/.test(selectedText)) {
+        if (isValidWord(selectedText)) {
             //console.log(`📝 Text selected: "${selectedText}"`);
         }
     }

@@ -3,17 +3,18 @@
  */
 
 // API Configuration
-const API_BASE_URL = 'http://localhost:5000';  // Update for production
+const API_BASE_URL = 'https://wordmaster-h00v.onrender.com';  // Update for production
 
 // Context menu IDs
 const CONTEXT_MENU_IDS = {
     ADD_WORD: 'add-word-to-vocabulary',
-     LOOKUP_WORD: 'lookup-word-definition'
+     LOOKUP_WORD: 'lookup-word-definition',
+     CHECK_AUTH: 'check-authentication-status'
 };
 
 // Initialize extension
 chrome.runtime.onInstalled.addListener(( ) => {
-    console.log('🚀 WordMaster extension installed');
+    //console.log('🚀 WordMaster extension installed');
     createContextMenus();
 });
 
@@ -37,7 +38,14 @@ function createContextMenus() {
             documentUrlPatterns: ["http://*/*", "https://*/*"]
         } );
 
-        console.log('✅ Context menus created');
+        chrome.contextMenus.create({
+            id: CONTEXT_MENU_IDS.CHECK_AUTH,
+            title: "Check authentication status",
+            contexts: ["browser_action"],
+            documentUrlPatterns: ["http://*/*", "https://*/*"]
+        } );
+
+        //console.log('✅ Context menus created');
     });
 }
 
@@ -50,7 +58,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
         return;
     }
 
-    console.log(`🔤 Context menu clicked: ${info.menuItemId} for word: "${selectedText}"`);
+    //console.log(`🔤 Context menu clicked: ${info.menuItemId} for word: "${selectedText}"`);
 
     try {
         switch (info.menuItemId) {
@@ -59,6 +67,9 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
                 break;
             case CONTEXT_MENU_IDS.LOOKUP_WORD:
                 await handleLookupWord(selectedText, tab);
+                break;
+            case CONTEXT_MENU_IDS.CHECK_AUTH:
+                await checkAuthenticationStatus();
                 break;
             default:
                 console.error('❌ Unknown menu item:', info.menuItemId);
@@ -94,7 +105,7 @@ async function handleAddWord(word, tab) {
             body: JSON.stringify({
                 word: word.toLowerCase(),
                 source: 'extension',
-                sourceUrl: tab.url
+                source_url: tab.url
             })
         });
 
@@ -122,9 +133,35 @@ async function handleAddWord(word, tab) {
             console.error('❌ API error:', result);
         }
     } catch (error) {
-        // Network or other error
+        console.error('❌ Error adding word:', error);
         await showNotification(tab.id, `❌ Network error: ${error.message}`, 'error');
-        console.error('❌ Network error:', error);
+    }
+}
+
+// Check authentication status
+async function checkAuthenticationStatus() {
+    try {
+        const authToken = await getAuthToken();
+        if (!authToken) {
+            return { success: false, authenticated: false };
+        }
+
+        const response = await fetch(`${API_BASE_URL}/api/auth/user`, {
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
+        });
+
+        if (response.ok) {
+            const user = await response.json();
+            return { success: true, authenticated: true, user };
+        } else {
+            // Token might be expired
+            await clearAuthToken();
+            return { success: false, authenticated: false };
+        }
+    } catch (error) {
+        return { success: false, error: error.message };
     }
 }
 
@@ -193,9 +230,9 @@ async function saveAuthToken(token) {
 async function clearAuthToken() {
     try {
         await chrome.storage.local.remove(['authToken']);
-        console.log('✅ Auth token cleared');
+        //console.log('✅ Auth token cleared');
     } catch (error) {
-        console.error('❌ Error clearing auth token:', error);
+        //console.error('❌ Error clearing auth token:', error);
     }
 }
 
@@ -276,7 +313,7 @@ async function updateBadge() {
 
         if (response.ok) {
             const stats = await response.json();
-            const wordCount = stats.total_words || 0;
+            const wordCount = stats.total_words_added || 0;
             
             // Show badge with word count
             chrome.action.setBadgeText({

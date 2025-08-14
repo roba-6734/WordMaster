@@ -13,7 +13,7 @@ let recentActivity, recentWords;
 
 // Initialize popup
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log('🚀 WordMaster popup loaded');
+    //console.log('🚀 WordMaster popup loaded');
     
     // Get DOM elements
     initializeElements();
@@ -64,21 +64,21 @@ function setupEventListeners() {
     
     // Open web app button
     openAppBtn.addEventListener('click', () => {
-        chrome.tabs.create({ url: 'http://localhost:5000' } ); // Update with your web app URL
+        chrome.tabs.create({ url: 'https://word-master-nu.vercel.app/' } ); // Update with your web app URL
     });
     
     // Refresh stats button
     refreshStatsBtn.addEventListener('click', loadUserStats);
-    
+
     // Auto-focus email input when login section is visible
-    const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-            if (mutation.target === loginSection && loginSection.style.display !== 'none') {
-                setTimeout(() => emailInput.focus(), 1000);
-            }
-        });
-    });
-    observer.observe(loginSection, { attributes: true, attributeFilter: ['style'] });
+//     const observer = new MutationObserver((mutations) => {
+//         mutations.forEach((mutation) => {
+//             if (mutation.target === loginSection && loginSection.style.display !== 'none') {
+//                 setTimeout(() => emailInput.focus(), 1000);
+//             }
+//         });
+//     });
+//     observer.observe(loginSection, { attributes: true, attributeFilter: ['style'] });
 }
 
 // Check authentication status
