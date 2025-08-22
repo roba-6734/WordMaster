@@ -137,8 +137,8 @@ WordMaster/
 ## 📚 API Documentation
 
 Once the backend is running, you can access the interactive API documentation at:
-- **Swagger UI**: [http://localhost:8000/docs](http://localhost:8000/docs)
-- **ReDoc**: [http://localhost:8000/redoc](http://localhost:8000/redoc)
+- **Swagger UI**: [https://wordmaster-h00v.onrender.com/docs](https://wordmaster-h00v.onrender.com/docs)
+
 
 ### Key API Endpoints
 
